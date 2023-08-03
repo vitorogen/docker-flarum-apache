@@ -8,7 +8,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 ENV UPLOAD_MAX_SIZE=5M \
     PHP_MEMORY_LIMIT=256M \
-    COMPOSER_ALLOW_SUPERUSER=1
+    COMPOSER_ALLOW_SUPERUSER=1 \
+    BASE_URL=
 
 RUN mv $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
 
@@ -58,10 +59,5 @@ RUN a2ensite flarum \
 
 VOLUME /var/www/html/forum
 
-# Copy the entrypoint script
-# Use ENV variables to update PHP ini
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-ENTRYPOINT ["docker-entrypoint.sh"]
-
-CMD ["apache2-foreground"]
+COPY rootfs /
+ENTRYPOINT ["/usr/local/bin/start.sh"]
